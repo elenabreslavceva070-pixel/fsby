@@ -20,20 +20,6 @@
       margin: 0 auto;
     }
 
-    .task-block {
-      background: #e8f0fe;
-      border-radius: 10px;
-      padding: 0.7rem 1rem;
-      margin-bottom: 0.6rem;
-      border-left: 4px solid #1f6e9c;
-      font-size: 0.9rem; /* +2pt */
-      line-height: 1.5;
-    }
-
-    .task-block strong {
-      color: #1f6e9c;
-    }
-
     .document-card {
       background: white;
       border-radius: 12px;
@@ -45,7 +31,7 @@
     .document-body {
       padding: 0.6rem 1rem;
       line-height: 1.4;
-      font-size: 0.85rem; /* +2pt */
+      font-size: 0.85rem;
       background: #ffffff;
       user-select: text;
     }
@@ -55,14 +41,14 @@
       word-break: break-word;
       line-height: 1.4;
       position: relative;
-      font-size: 0.85rem; /* +2pt */
+      font-size: 0.85rem;
     }
 
     #selectableText span {
       display: inline;
       white-space: pre-wrap;
       font-weight: normal !important;
-      font-size: 0.85rem; /* +2pt */
+      font-size: 0.85rem;
     }
 
     .selection-highlight {
@@ -71,7 +57,7 @@
       border-radius: 2px;
       padding: 0 1px;
       font-weight: normal !important;
-      font-size: 0.85rem; /* +2pt */
+      font-size: 0.85rem;
     }
 
     .mark-correct {
@@ -80,7 +66,7 @@
       border-radius: 2px;
       padding: 0 1px;
       font-weight: normal !important;
-      font-size: 0.85rem; /* +2pt */
+      font-size: 0.85rem;
     }
 
     .mark-wrong {
@@ -89,33 +75,33 @@
       border-radius: 2px;
       padding: 0 1px;
       font-weight: normal !important;
-      font-size: 0.85rem; /* +2pt */
+      font-size: 0.85rem;
     }
 
     .doc-title {
       text-align: center;
       font-weight: 600;
-      font-size: 0.95rem; /* +2pt */
+      font-size: 0.95rem;
       margin-bottom: 0.2rem;
     }
 
     .doc-city {
       text-align: center;
       margin-bottom: 0.2rem;
-      font-size: 0.83rem; /* +2pt */
+      font-size: 0.83rem;
     }
 
     .doc-section {
       font-weight: 600;
       margin-top: 0.3rem;
       margin-bottom: 0.05rem;
-      font-size: 0.87rem; /* +2pt */
+      font-size: 0.87rem;
     }
 
     .doc-clause {
       padding-left: 0.8rem;
       margin-bottom: 0.05rem;
-      font-size: 0.83rem; /* +2pt */
+      font-size: 0.83rem;
     }
 
     #selectableText::selection {
@@ -138,7 +124,7 @@
 
     .decision-block-wrapper .decision-label {
       font-weight: 500;
-      font-size: 0.88rem; /* +2pt */
+      font-size: 0.88rem;
       color: #1a2c3e;
     }
 
@@ -153,7 +139,7 @@
       border: none;
       padding: 0.25rem 0.9rem;
       border-radius: 25px;
-      font-size: 0.83rem; /* +2pt */
+      font-size: 0.83rem;
       cursor: pointer;
       background: #f0f4fa;
       color: #1f4d73;
@@ -212,7 +198,7 @@
       border: none;
       padding: 0.25rem 1.2rem;
       border-radius: 25px;
-      font-size: 0.85rem; /* +2pt */
+      font-size: 0.85rem;
       cursor: pointer;
       background: #1f6e9c;
       color: white;
@@ -256,7 +242,7 @@
     }
 
     .mistake-feedback {
-      font-size: 0.83rem; /* +2pt */
+      font-size: 0.83rem;
       line-height: 1.4;
       color: #2c3e50;
     }
@@ -267,7 +253,7 @@
       border-radius: 5px;
       margin-bottom: 0.3rem;
       font-weight: 500;
-      font-size: 0.83rem; /* +2pt */
+      font-size: 0.83rem;
     }
 
     .decision-result {
@@ -279,7 +265,7 @@
 
     .decision-result h4 {
       margin-bottom: 0.15rem;
-      font-size: 0.9rem; /* +2pt */
+      font-size: 0.9rem;
     }
 
     .sample-modal {
@@ -325,7 +311,7 @@
     .correct-doc-text {
       font-family: 'Segoe UI', monospace;
       white-space: pre-wrap;
-      font-size: 0.88rem; /* +2pt */
+      font-size: 0.88rem;
       line-height: 1.4;
       background: #fafcff;
       padding: 0.6rem;
@@ -343,7 +329,7 @@
 
     .modal-header h3 {
       color: #1f6e9c;
-      font-size: 0.98rem; /* +2pt */
+      font-size: 0.98rem;
     }
 
     .hint-btn {
@@ -352,7 +338,7 @@
       border: none;
       padding: 0.25rem 0.8rem;
       border-radius: 25px;
-      font-size: 0.83rem; /* +2pt */
+      font-size: 0.83rem;
       cursor: pointer;
       font-weight: 500;
       transition: all 0.2s;
@@ -376,9 +362,7 @@
   </style>
 </head>
 <body>
-  <div class="task-block">
-    <strong>Задание:</strong> Вы получили предоплату от заказчика. Проверьте текст договора и кликните на пункты, которые нарушают критерии ФСБУ 9/2025. На основе этих данных решите, признавать выручку по сделке или нет.
-  </div>
+  <!-- Блок с заданием УДАЛЕН -->
 
   <div class="document-card">
     <div class="document-body">
