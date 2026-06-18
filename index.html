@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Тренажер: ФСБУ 9/2025</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f0f4f9;
+      font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, 'Roboto', sans-serif;
+      padding: 1.5rem;
+      color: #1a2c3e;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .task-block {
+      background: #e8f0fe;
+      border-radius: 10px;
+      padding: 0.5rem 0.8rem;
+      margin-bottom: 0.6rem;
+      border-left: 4px solid #1f6e9c;
+      font-size: 0.78rem;
+      line-height: 1.3;
+    }
+
+    .task-block strong {
+      color: #1f6e9c;
+    }
+
+    .document-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      margin-bottom: 0.6rem;
+    }
+
+    .document-body {
+      padding: 0.6rem 1rem;
+      line-height: 1.3;
+      font-size: 0.72rem;
+      background: #ffffff;
+      user-select: text;
+    }
+
+    #selectableText {
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.3;
+      position: relative;
+      font-size: 0.72rem;
+    }
+
+    #selectableText span {
+      display: inline;
+      white-space: pre-wrap;
+      font-weight: normal !important;
+      font-size: 0.72rem;
+    }
+
+    .selection-highlight {
+      background-color: #5a9eff !important;
+      color: white !important;
+      border-radius: 2px;
+      padding: 0 1px;
+      font-weight: normal !important;
+      font-size: 0.72rem;
+    }
+
+    .mark-correct {
+      background-color: #4caf50 !important;
+      color: white !important;
+      border-radius: 2px;
+      padding: 0 1px;
+      font-weight: normal !important;
+      font-size: 0.72rem;
+    }
+
+    .mark-wrong {
+      background-color: #f44336 !important;
+      color: white !important;
+      border-radius: 2px;
+      padding: 0 1px;
+      font-weight: normal !important;
+      font-size: 0.72rem;
+    }
+
+    .doc-title {
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.82rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .doc-city {
+      text-align: center;
+      margin-bottom: 0.2rem;
+      font-size: 0.7rem;
+    }
+
+    .doc-section {
+      font-weight: 600;
+      margin-top: 0.3rem;
+      margin-bottom: 0.05rem;
+      font-size: 0.74rem;
+    }
+
+    .doc-clause {
+      padding-left: 0.8rem;
+      margin-bottom: 0.05rem;
+      font-size: 0.7rem;
+    }
+
+    #selectableText::selection {
+      background: #b8d9ff;
+    }
+
+    /* Блок с кнопками решения */
+    .decision-block-wrapper {
+      background: white;
+      border-radius: 10px;
+      padding: 0.5rem 0.8rem;
+      margin-bottom: 0.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+      border: 1px solid #e8ecf0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .decision-block-wrapper .decision-label {
+      font-weight: 500;
+      font-size: 0.75rem;
+      color: #1a2c3e;
+    }
+
+    .decision-block-wrapper .decision-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .decision-block-wrapper .decision-buttons button {
+      font-family: inherit;
+      font-weight: 500;
+      border: none;
+      padding: 0.25rem 0.9rem;
+      border-radius: 25px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      background: #f0f4fa;
+      color: #1f4d73;
+      transition: all 0.2s;
+    }
+
+    .decision-block-wrapper .decision-buttons button.outline {
+      background: transparent;
+      border: 1px solid #95CAFA;
+      color: #1f6e9c;
+    }
+
+    .decision-block-wrapper .decision-buttons button.selected-yes {
+      background: #5a9eff !important;
+      color: white !important;
+      border: 2px solid #4a8ee0 !important;
+    }
+
+    .decision-block-wrapper .decision-buttons button.selected-no {
+      background: #5a9eff !important;
+      color: white !important;
+      border: 2px solid #4a8ee0 !important;
+    }
+
+    .decision-block-wrapper .decision-buttons button.result-correct {
+      background: #4caf50 !important;
+      color: white !important;
+      border: 2px solid #388e3c !important;
+    }
+
+    .decision-block-wrapper .decision-buttons button.result-wrong {
+      background: #f44336 !important;
+      color: white !important;
+      border: 2px solid #c62828 !important;
+    }
+
+    .decision-block-wrapper .decision-buttons button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .action-panel {
+      background: white;
+      border-radius: 10px;
+      padding: 0.4rem 0.6rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+
+    .action-panel button.primary {
+      font-family: inherit;
+      font-weight: 500;
+      border: none;
+      padding: 0.25rem 1.2rem;
+      border-radius: 25px;
+      font-size: 0.72rem;
+      cursor: pointer;
+      background: #1f6e9c;
+      color: white;
+      transition: all 0.2s;
+    }
+
+    .action-panel button.primary:hover {
+      background: #0f5a84;
+      transform: translateY(-1px);
+    }
+
+    .action-panel button.primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .action-panel .reset-icon {
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: #888;
+      transition: all 0.2s;
+      background: none;
+      border: none;
+      line-height: 1;
+      padding: 0 0.2rem;
+    }
+
+    .action-panel .reset-icon:hover {
+      color: #333;
+      transform: rotate(45deg);
+    }
+
+    .results-panel {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 0.5rem 0.7rem;
+      margin-top: 0.6rem;
+      border-left: 3px solid #95CAFA;
+      display: none;
+    }
+
+    .mistake-feedback {
+      font-size: 0.7rem;
+      line-height: 1.3;
+      color: #2c3e50;
+    }
+
+    .summary-badge {
+      background: #eef3fc;
+      padding: 0.2rem 0.5rem;
+      border-radius: 5px;
+      margin-bottom: 0.3rem;
+      font-weight: 500;
+      font-size: 0.7rem;
+    }
+
+    .decision-result {
+      margin-top: 0.4rem;
+      padding: 0.4rem;
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    .decision-result h4 {
+      margin-bottom: 0.15rem;
+      font-size: 0.78rem;
+    }
+
+    .sample-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-card {
+      background: white;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 1rem 1.2rem;
+      box-shadow: 0 20px 30px rgba(0,0,0,0.2);
+      border-radius: 16px;
+    }
+
+    .close-modal {
+      float: right;
+      font-size: 1.3rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+      line-height: 1;
+      color: #888;
+      padding: 0 0.3rem;
+    }
+
+    .close-modal:hover {
+      color: #333;
+    }
+
+    .correct-doc-text {
+      font-family: 'Segoe UI', monospace;
+      white-space: pre-wrap;
+      font-size: 0.75rem;
+      line-height: 1.4;
+      background: #fafcff;
+      padding: 0.6rem;
+      border-radius: 10px;
+      clear: both;
+      margin-top: 0.3rem;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.3rem;
+    }
+
+    .modal-header h3 {
+      color: #1f6e9c;
+      font-size: 0.85rem;
+    }
+
+    .hint-btn {
+      background: #ff9800;
+      color: white;
+      border: none;
+      padding: 0.25rem 0.8rem;
+      border-radius: 25px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .hint-btn:hover {
+      background: #f57c00;
+      transform: translateY(-1px);
+    }
+
+    .doc-clause, .doc-section, .doc-title, .doc-city, #selectableText div {
+      position: relative;
+    }
+
+    #selectableText br {
+      display: block;
+      content: "";
+      margin: 0;
+      line-height: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="task-block">
+    <strong>Задание:</strong> Вы получили предоплату от заказчика. Проверьте текст договора и кликните на пункты, которые нарушают критерии ФСБУ 9/2025. На основе этих данных решите признавать выручку по сделке или нет.
+  </div>
+
+  <div class="document-card">
+    <div class="document-body">
+      <div id="selectableText" contenteditable="false"></div>
+    </div>
+  </div>
+
+  <!-- Блок с кнопками решения -->
+  <div class="decision-block-wrapper">
+    <span class="decision-label">Признаете выручку по сделке?</span>
+    <div class="decision-buttons">
+      <button id="yesBtn" class="outline">Да, признаю</button>
+      <button id="noBtn" class="outline">Нет, не признаю</button>
+    </div>
+  </div>
+
+  <!-- Панель с кнопкой Проверить и иконкой сброса -->
+  <div class="action-panel">
+    <button id="checkBtn" class="primary" disabled>Проверить</button>
+    <button id="resetBtn" class="reset-icon" title="Сбросить всё">⟳</button>
+  </div>
+
+  <div id="resultsArea" class="results-panel">
+    <div id="feedbackMessage" class="mistake-feedback"></div>
+    <div id="decisionArea"></div>
+  </div>
+
+  <div id="correctSampleModal" class="sample-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Подсказка</h3>
+        <button class="close-modal" id="closeModalBtn">&times;</button>
+      </div>
+      <div class="correct-doc-text" id="fullCorrectDocument"></div>
+    </div>
+  </div>
+
+<script>
+  const documentText = `ДОГОВОР ОКАЗАНИЯ УСЛУГ
+г. Москва
+
+ООО «Бизнес Консалт» (Исполнитель) и ООО «Прогресс» (Заказчик) заключили настоящий договор.
+
+1. Предмет договора
+1.1. Исполнитель обязуется провести для Заказчика комплекс консультационных услуг по вопросам автоматизации бухгалтерского учета.
+1.2. Услуги оказываются в период с 1 сентября по 30 сентября 2026 года.
+
+2. Права и обязанности сторон
+2.1. Исполнитель обязан оказать услуги в объеме, предусмотренном настоящим договором.
+2.2. Заказчик обязан принять оказанные услуги.
+
+3. Стоимость услуг
+3.1. Стоимость услуг определяется Исполнителем после завершения работ с учетом достигнутого Заказчиком экономического эффекта.
+3.2. Размер вознаграждения сообщается Заказчику отдельным письмом.
+
+4. Порядок расчетов
+4.1. Заказчик оплачивает услуги в течение 10 календарных дней после получения счета.
+4.2. Если финансовое положение Заказчика не позволяет произвести оплату, Заказчик вправе не оплачивать услуги до улучшения своего финансового состояния.
+
+5. Цель договора
+5.1. Настоящий договор заключен для получения Заказчиком консультационных услуг и повышения эффективности его деятельности.
+
+6. Ответственность сторон
+6.1. Заказчик вправе отказаться от оплаты услуг по собственному усмотрению без объяснения причин.
+6.2. В случае отказа Заказчика Исполнитель не вправе требовать оплаты услуг в судебном или ином порядке.`;
+
+  const correctAnswer = `Не признавайте предоплату как выручку по этому договору, потому что:
+• в договоре не прописали цену сделки;
+• нет уверенности в том, что получите оплату;
+• у компании отсутствует юридическая защищенность прав на возмещение.
+Предоплату по этому договору учитывайте как обязательство, а не как выручку, п. 16 ФСБУ 9/2025.`;
+
+  function formatDocument(text) {
+    let lines = text.split('\n');
+    let formattedLines = [];
+    
+    for (let i = 0; i < lines.length; i++) {
+      let line = lines[i];
+      
+      if (line.includes('ДОГОВОР ОКАЗАНИЯ УСЛУГ')) {
+        formattedLines.push(`<div class="doc-title">${line}</div>`);
+      }
+      else if (line.trim().match(/^г\.\s*[А-Яа-я]+$/)) {
+        formattedLines.push(`<div class="doc-city">${line.trim()}</div>`);
+      }
+      else if (line.trim().match(/^\d+\.\s*[А-Я][а-я]+/)) {
+        formattedLines.push(`<div class="doc-section">${line.trim()}</div>`);
+      }
+      else if (line.trim().match(/^\d+\.\d+\./)) {
+        formattedLines.push(`<div class="doc-clause">${line.trim()}</div>`);
+      }
+      else if (line.trim() === '') {
+        formattedLines.push('<br>');
+      }
+      else {
+        formattedLines.push(`<div>${line}</div>`);
+      }
+    }
+    
+    return formattedLines.join('');
+  }
+
+  const errorDefinitions = [
+    {
+      id: 1,
+      description: "1. Не определена цена сделки (п. 3.1, 3.2) — стоимость определяется после завершения работ, что нарушает критерий ФСБУ 9/2025.",
+      check: (text) => {
+        return text.includes("Стоимость услуг определяется Исполнителем после завершения работ") || 
+               text.includes("Размер вознаграждения сообщается Заказчику отдельным письмом");
+      }
+    },
+    {
+      id: 2,
+      description: "2. Нет уверенности в получении оплаты (п. 4.2) — заказчик может не оплачивать услуги при ухудшении финансового положения.",
+      check: (text) => {
+        return text.includes("Если финансовое положение Заказчика не позволяет произвести оплату") ||
+               text.includes("Заказчик вправе не оплачивать услуги до улучшения своего финансового состояния");
+      }
+    },
+    {
+      id: 3,
+      description: "3. Отсутствует юридическая защищенность прав на возмещение (п. 6.1, 6.2) — заказчик может отказаться от оплаты без причины, а исполнитель не может требовать оплату в суде.",
+      check: (text) => {
+        return text.includes("Заказчик вправе отказаться от оплаты услуг по собственному усмотрению") ||
+               text.includes("Исполнитель не вправе требовать оплаты услуг в судебном или ином порядке");
+      }
+    }
+  ];
+
+  let selectedSpans = [];
+  let userDecision = null;
+  let checkPerformed = false;
+
+  function handleTextSelection() {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0 || selection.isCollapsed) return;
+    
+    const range = selection.getRangeAt(0);
+    const selectedText = range.toString();
+    
+    if (selectedText.trim().length === 0) return;
+    
+    try {
+      const span = document.createElement('span');
+      span.className = 'selection-highlight';
+      span.textContent = selectedText;
+      span.setAttribute('data-original-text', selectedText);
+      
+      range.deleteContents();
+      range.insertNode(span);
+      
+      selectedSpans.push(span);
+      selection.removeAllRanges();
+    } catch(e) {
+      console.warn('Ошибка при выделении', e);
+    }
+  }
+
+  function clearAllHighlights() {
+    for (let span of selectedSpans) {
+      if (span && span.parentNode) {
+        const textNode = document.createTextNode(span.textContent);
+        span.parentNode.replaceChild(textNode, span);
+      }
+    }
+    selectedSpans = [];
+    const resultsDiv = document.getElementById('resultsArea');
+    resultsDiv.style.display = 'none';
+  }
+
+  function evaluateMistakes() {
+    const foundErrorIds = new Set();
+    
+    for (let span of selectedSpans) {
+      const text = span.textContent;
+      let isError = false;
+      
+      for (let error of errorDefinitions) {
+        if (error.check(text)) {
+          isError = true;
+          foundErrorIds.add(error.id);
+          break;
+        }
+      }
+      
+      if (isError) {
+        span.classList.remove('selection-highlight');
+        span.classList.add('mark-correct');
+      } else {
+        span.classList.remove('selection-highlight');
+        span.classList.add('mark-wrong');
+      }
+    }
+    
+    const foundCount = foundErrorIds.size;
+    const resultsDiv = document.getElementById('resultsArea');
+    const feedbackDiv = document.getElementById('feedbackMessage');
+    const decisionArea = document.getElementById('decisionArea');
+    
+    let html = `<div class="summary-badge">Вы нашли ${foundCount} из 3 нарушений ФСБУ 9/2025</div>`;
+    
+    feedbackDiv.innerHTML = html;
+    resultsDiv.style.display = 'block';
+    checkPerformed = true;
+    
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
+    
+    yesBtn.classList.remove('selected-yes', 'selected-no');
+    noBtn.classList.remove('selected-yes', 'selected-no');
+    
+    if (userDecision === 'no') {
+      noBtn.classList.add('result-correct');
+      yesBtn.classList.add('result-wrong');
+    } else if (userDecision === 'yes') {
+      yesBtn.classList.add('result-wrong');
+      noBtn.classList.add('result-correct');
+    } else {
+      yesBtn.classList.add('result-wrong');
+      noBtn.classList.add('result-wrong');
+    }
+    
+    let message = '';
+    if (foundCount === 3) {
+      message = 'Молодец! Вы правильно нашли все сомнительные пункты договора.';
+      decisionArea.innerHTML = `
+        <div class="decision-result" style="background: #e8f5e9; border: 2px solid #4caf50;">
+          <h4 style="color: #2e7d32;">${message}</h4>
+          <button id="showHintBtn" class="hint-btn" style="margin-top: 0.3rem;">Подсказка</button>
+        </div>
+      `;
+    } else {
+      message = `Вы нашли ${foundCount} из 3 нарушений ФСБУ 9/2025`;
+      decisionArea.innerHTML = `
+        <div class="decision-result" style="background: #fff3cd; border: 2px solid #ffc107;">
+          <h4>${message}</h4>
+          <button id="showHintBtn" class="hint-btn" style="margin-top: 0.3rem;">Подсказка</button>
+        </div>
+      `;
+    }
+    
+    const hintBtn = document.getElementById('showHintBtn');
+    if (hintBtn) hintBtn.onclick = () => showModal();
+  }
+
+  function resetAll() {
+    for (let span of selectedSpans) {
+      if (span && span.parentNode) {
+        const textNode = document.createTextNode(span.textContent);
+        span.parentNode.replaceChild(textNode, span);
+      }
+    }
+    selectedSpans = [];
+    userDecision = null;
+    checkPerformed = false;
+    
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
+    
+    yesBtn.classList.remove('selected-yes', 'selected-no', 'result-correct', 'result-wrong');
+    noBtn.classList.remove('selected-yes', 'selected-no', 'result-correct', 'result-wrong');
+    
+    document.getElementById('checkBtn').disabled = true;
+    const container = document.getElementById('selectableText');
+    const formattedHtml = formatDocument(documentText);
+    container.innerHTML = formattedHtml;
+    const resultsDiv = document.getElementById('resultsArea');
+    resultsDiv.style.display = 'none';
+    document.getElementById('decisionArea').innerHTML = '';
+  }
+
+  function initDocument() {
+    const container = document.getElementById('selectableText');
+    const formattedHtml = formatDocument(documentText);
+    container.innerHTML = formattedHtml;
+    
+    document.addEventListener('mouseup', function(e) {
+      if (e.target.closest('button')) return;
+      const selection = window.getSelection();
+      if (selection && !selection.isCollapsed && selection.toString().trim().length > 0) {
+        let parent = selection.anchorNode;
+        let insideContainer = false;
+        while(parent) {
+          if (parent === container || (parent.parentNode === container)) {
+            insideContainer = true;
+            break;
+          }
+          parent = parent.parentNode;
+        }
+        if (insideContainer) {
+          handleTextSelection();
+        }
+      }
+    });
+  }
+
+  const modal = document.getElementById('correctSampleModal');
+  const fullCorrectSpan = document.getElementById('fullCorrectDocument');
+  
+  function showModal() {
+    fullCorrectSpan.innerHTML = correctAnswer.replace(/\n/g, '<br>');
+    modal.style.display = 'flex';
+  }
+
+  document.getElementById('yesBtn').addEventListener('click', function() {
+    if (checkPerformed) return;
+    
+    if (userDecision === 'yes') {
+      userDecision = null;
+      this.classList.remove('selected-yes');
+      document.getElementById('checkBtn').disabled = true;
+    } else {
+      userDecision = 'yes';
+      this.classList.add('selected-yes');
+      document.getElementById('noBtn').classList.remove('selected-no');
+      document.getElementById('checkBtn').disabled = false;
+    }
+  });
+
+  document.getElementById('noBtn').addEventListener('click', function() {
+    if (checkPerformed) return;
+    
+    if (userDecision === 'no') {
+      userDecision = null;
+      this.classList.remove('selected-no');
+      document.getElementById('checkBtn').disabled = true;
+    } else {
+      userDecision = 'no';
+      this.classList.add('selected-no');
+      document.getElementById('yesBtn').classList.remove('selected-yes');
+      document.getElementById('checkBtn').disabled = false;
+    }
+  });
+
+  document.getElementById('checkBtn').addEventListener('click', evaluateMistakes);
+  document.getElementById('resetBtn').addEventListener('click', resetAll);
+  document.getElementById('closeModalBtn').addEventListener('click', () => modal.style.display = 'none');
+  window.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+  
+  initDocument();
+</script>
+</body>
+</html>
