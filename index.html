@@ -30,7 +30,7 @@
 
     .document-body {
       padding: 0.6rem 1rem;
-      line-height: 1.4;
+      line-height: 1.6;
       font-size: 0.85rem;
       background: #ffffff;
       user-select: text;
@@ -38,10 +38,12 @@
 
     #selectableText {
       white-space: pre-wrap;
-      word-break: break-word;
-      line-height: 1.4;
+      word-break: normal;
+      line-height: 1.6;
       position: relative;
       font-size: 0.85rem;
+      word-wrap: normal;
+      overflow-wrap: normal;
     }
 
     #selectableText span {
@@ -49,6 +51,8 @@
       white-space: pre-wrap;
       font-weight: normal !important;
       font-size: 0.85rem;
+      word-break: normal;
+      word-wrap: normal;
     }
 
     .selection-highlight {
@@ -108,6 +112,13 @@
       background: #b8d9ff;
     }
 
+    #selectableText div {
+      display: block;
+      width: 100%;
+      word-break: normal;
+      word-wrap: normal;
+    }
+
     .decision-block-wrapper {
       background: white;
       border-radius: 10px;
@@ -153,27 +164,27 @@
     }
 
     .decision-block-wrapper .decision-buttons button.selected-yes {
-      background: #5a9eff !important;
-      color: white !important;
-      border: 2px solid #4a8ee0 !important;
+      background: rgba(90, 158, 255, 0.35) !important;
+      color: #1f4d73 !important;
+      border: 2px solid rgba(74, 142, 224, 0.5) !important;
     }
 
     .decision-block-wrapper .decision-buttons button.selected-no {
-      background: #5a9eff !important;
-      color: white !important;
-      border: 2px solid #4a8ee0 !important;
+      background: rgba(90, 158, 255, 0.35) !important;
+      color: #1f4d73 !important;
+      border: 2px solid rgba(74, 142, 224, 0.5) !important;
     }
 
     .decision-block-wrapper .decision-buttons button.result-correct {
-      background: #4caf50 !important;
-      color: white !important;
-      border: 2px solid #388e3c !important;
+      background: rgba(76, 175, 80, 0.3) !important;
+      color: #1f4d73 !important;
+      border: 2px solid rgba(56, 142, 60, 0.5) !important;
     }
 
     .decision-block-wrapper .decision-buttons button.result-wrong {
-      background: #f44336 !important;
-      color: white !important;
-      border: 2px solid #c62828 !important;
+      background: rgba(244, 67, 54, 0.3) !important;
+      color: #1f4d73 !important;
+      border: 2px solid rgba(198, 40, 40, 0.5) !important;
     }
 
     .decision-block-wrapper .decision-buttons button:disabled {
@@ -362,8 +373,6 @@
   </style>
 </head>
 <body>
-  <!-- Блок с заданием УДАЛЕН -->
-
   <div class="document-card">
     <div class="document-body">
       <div id="selectableText" contenteditable="false"></div>
@@ -426,6 +435,33 @@
 6. Ответственность сторон
 6.1. Заказчик вправе отказаться от оплаты услуг по собственному усмотрению без объяснения причин.
 6.2. В случае отказа Заказчика Исполнитель не вправе требовать оплаты услуг в судебном или ином порядке.`;
+
+  // Функция для ручного переноса последних слов длинных предложений
+  function wrapLongLines(text) {
+    let lines = text.split('\n');
+    let result = [];
+    
+    for (let line of lines) {
+      // Если строка длиннее 80 символов и не является заголовком или пунктом
+      if (line.length > 80 && !line.match(/^\d+\./) && !line.includes('ДОГОВОР')) {
+        let words = line.split(' ');
+        if (words.length > 5) {
+          // Переносим последние 2-3 слова на новую строку
+          let lastWords = words.slice(-3).join(' ');
+          let firstPart = words.slice(0, -3).join(' ');
+          result.push(firstPart);
+          result.push(lastWords);
+          continue;
+        }
+      }
+      result.push(line);
+    }
+    
+    return result.join('\n');
+  }
+
+  // Применяем переносы к тексту
+  const wrappedText = wrapLongLines(documentText);
 
   const correctAnswer = `Не признавайте предоплату как выручку по этому договору, потому что:
 • в договоре не прописали цену сделки;
@@ -569,14 +605,13 @@
     const yesBtn = document.getElementById('yesBtn');
     const noBtn = document.getElementById('noBtn');
     
-    yesBtn.classList.remove('selected-yes', 'selected-no');
-    noBtn.classList.remove('selected-yes', 'selected-no');
+    yesBtn.classList.remove('selected-yes', 'selected-no', 'result-correct', 'result-wrong');
+    noBtn.classList.remove('selected-yes', 'selected-no', 'result-correct', 'result-wrong');
     
-    if (userDecision === 'no') {
+    if (userDecision === 'yes') {
+      yesBtn.classList.add('result-wrong');
       noBtn.classList.add('result-correct');
-      yesBtn.classList.add('result-wrong');
-    } else if (userDecision === 'yes') {
-      yesBtn.classList.add('result-wrong');
+    } else if (userDecision === 'no') {
       noBtn.classList.add('result-correct');
     } else {
       yesBtn.classList.add('result-wrong');
@@ -625,7 +660,7 @@
     
     document.getElementById('checkBtn').disabled = true;
     const container = document.getElementById('selectableText');
-    const formattedHtml = formatDocument(documentText);
+    const formattedHtml = formatDocument(wrappedText);
     container.innerHTML = formattedHtml;
     const resultsDiv = document.getElementById('resultsArea');
     resultsDiv.style.display = 'none';
@@ -634,7 +669,7 @@
 
   function initDocument() {
     const container = document.getElementById('selectableText');
-    const formattedHtml = formatDocument(documentText);
+    const formattedHtml = formatDocument(wrappedText);
     container.innerHTML = formattedHtml;
     
     document.addEventListener('mouseup', function(e) {
